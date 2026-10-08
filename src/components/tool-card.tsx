@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/app-text';
@@ -17,29 +17,28 @@ export function ToolCard({ tool }: ToolCardProps) {
   if (!category) return null;
 
   return (
-    <Link href={{ pathname: '/tool/[slug]', params: { slug: tool.slug } }} asChild>
-      <Pressable
-        accessibilityHint={`Opens the ${tool.label} workspace`}
-        accessibilityRole="button"
-        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}>
-        <View style={styles.leading}>
-          <CatalogIcon
-            backgroundColor={category.iconBackground}
-            color={category.iconColor}
-            name={tool.icon}
-          />
-          <View style={styles.copy}>
-            <AppText variant="bodyMedium" numberOfLines={1}>
-              {tool.label}
-            </AppText>
-            <AppText color={colors.inkMuted} variant="caption" numberOfLines={2}>
-              {tool.description}
-            </AppText>
-          </View>
+    <Pressable
+      accessibilityHint={`Opens the ${tool.label} tool`}
+      accessibilityRole="button"
+      onPress={() => router.push({ pathname: '/tool/[slug]', params: { slug: tool.slug } })}
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}>
+      <View style={styles.leading}>
+        <CatalogIcon
+          backgroundColor={category.iconBackground}
+          color={category.iconColor}
+          name={tool.icon}
+        />
+        <View style={styles.copy}>
+          <AppText variant="bodyMedium" numberOfLines={1}>
+            {tool.label}
+          </AppText>
+          <AppText color={colors.inkMuted} variant="caption" numberOfLines={2}>
+            {tool.description}
+          </AppText>
         </View>
-        <MaterialCommunityIcons color={colors.inkSubtle} name="chevron-right" size={23} />
-      </Pressable>
-    </Link>
+      </View>
+      <MaterialCommunityIcons color={colors.inkSubtle} name="chevron-right" size={23} />
+    </Pressable>
   );
 }
 

@@ -27,7 +27,7 @@ export default function ToolScreen() {
       <SafeAreaView style={styles.safeArea}>
         <View style={[styles.content, styles.notFound]}>
           <AppText variant="heading">Tool not found</AppText>
-          <AppText color={colors.inkMuted}>This workspace is not in the mobile catalog.</AppText>
+          <AppText color={colors.inkMuted}>This tool is not in the mobile catalog.</AppText>
           <Pressable accessibilityRole="button" onPress={() => router.replace('/')} style={styles.primaryButton}>
             <AppText color={colors.white} variant="label">
               Return to catalog
@@ -71,9 +71,9 @@ export default function ToolScreen() {
             <AppText color={colors.inkMuted}>{tool.description}</AppText>
           </View>
 
-          <View style={styles.workspace}>
-            <View style={styles.workspaceHeading}>
-              <View style={styles.workspaceCopy}>
+          <View style={styles.toolPanel}>
+            <View style={styles.toolPanelHeading}>
+              <View style={styles.toolPanelCopy}>
                 <AppText variant="heading">Choose your file</AppText>
                 <AppText color={colors.inkMuted} variant="caption">
                   File selection and conversion are not available in this build yet.
@@ -117,7 +117,7 @@ export default function ToolScreen() {
           </View>
 
           <View style={styles.details}>
-            <AppText variant="heading">What this workspace will do</AppText>
+            <AppText variant="heading">What this tool will do</AppText>
             <View style={styles.detailList}>
               {tool.details.map((detail) => (
                 <View key={detail} style={styles.detailRow}>
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.md,
   },
-  workspace: {
+  toolPanel: {
     ...shadows.card,
     backgroundColor: colors.surface,
     borderColor: colors.border,
@@ -195,13 +195,13 @@ const styles = StyleSheet.create({
     gap: spacing.xxl,
     padding: spacing.xl,
   },
-  workspaceHeading: {
+  toolPanelHeading: {
     alignItems: 'flex-start',
     flexDirection: 'row',
     gap: spacing.md,
     justifyContent: 'space-between',
   },
-  workspaceCopy: {
+  toolPanelCopy: {
     flex: 1,
     gap: spacing.sm,
   },

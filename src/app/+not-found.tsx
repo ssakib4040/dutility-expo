@@ -13,7 +13,7 @@ export default function NotFoundScreen() {
         <BrandLockup />
         <View style={styles.copy}>
           <AppText variant="title">That page is not in the toolbox.</AppText>
-          <AppText color={colors.inkMuted}>Return to the catalog to choose an available workspace.</AppText>
+          <AppText color={colors.inkMuted}>Return to the catalog to choose an available tool.</AppText>
         </View>
         <Link href="/" asChild>
           <Pressable accessibilityRole="button" style={styles.button}>
