@@ -5,7 +5,7 @@
     "description": "Everyday tools for documents, images, media, text, and files.",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/dutility-app-icon-clean.png",
     "scheme": "dutility",
     "userInterfaceStyle": "light",
     "backgroundColor": "#F7F7F9",
@@ -14,12 +14,12 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.dutility.app",
       "buildNumber": "1",
-      "icon": "./assets/images/icon.png"
+      "icon": "./assets/images/dutility-app-icon-clean.png"
     },
     "android": {
       "package": "com.dutility.app",
       "versionCode": 1,
-      "icon": "./assets/images/icon.png",
+      "icon": "./assets/images/dutility-app-icon-clean.png",
       "adaptiveIcon": {
         "backgroundColor": "#F7F7F9",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

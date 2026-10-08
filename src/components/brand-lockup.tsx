@@ -12,7 +12,7 @@ export function BrandLockup({ compact = false }: BrandLockupProps) {
     <View style={styles.container} accessibilityRole="header">
       <Image
         accessibilityIgnoresInvertColors
-        source={require('@/assets/images/icon.png')}
+        source={require('@/assets/images/dutility-app-icon-clean.png')}
         style={[styles.mark, compact && styles.compactMark]}
       />
       <AppText variant="heading" style={compact && styles.compactText}>
