@@ -12,12 +12,12 @@
     "primaryColor": "#6366F1",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dutility.app",
+      "bundleIdentifier": "com.ssakib4040.dutility",
       "buildNumber": "1",
       "icon": "./assets/images/dutility-app-icon-clean.png"
     },
     "android": {
-      "package": "com.dutility.app",
+      "package": "com.ssakib4040.dutility",
       "versionCode": 1,
       "icon": "./assets/images/dutility-app-icon-clean.png",
       "adaptiveIcon": {
