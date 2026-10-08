@@ -50,6 +50,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b8230264-013d-43d2-9e6b-e36c3c22fe2c"
+      }
+    },
+    "owner": "dutility"
   }
 }
