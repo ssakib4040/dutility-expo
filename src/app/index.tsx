@@ -1,98 +1,158 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { AppText } from '@/components/app-text';
+import { BrandLockup } from '@/components/brand-lockup';
+import { CategoryCard } from '@/components/category-card';
+import { SearchField } from '@/components/search-field';
+import { ToolCard } from '@/components/tool-card';
+import { categories, tools } from '@/data/catalog';
+import { colors, layout, spacing } from '@/theme/tokens';
 
 export default function HomeScreen() {
+  const [query, setQuery] = useState('');
+  const normalizedQuery = query.trim().toLowerCase();
+
+  const filteredTools = useMemo(
+    () =>
+      tools.filter((tool) => {
+        if (!normalizedQuery) return true;
+        const category = categories.find((item) => item.id === tool.categoryId);
+        return `${tool.label} ${tool.description} ${tool.inputLabel} ${tool.outputLabel} ${category?.label ?? ''}`
+          .toLowerCase()
+          .includes(normalizedQuery);
+      }),
+    [normalizedQuery],
+  );
+
+  const filteredCategories = useMemo(
+    () =>
+      categories.filter((category) =>
+        normalizedQuery
+          ? `${category.label} ${category.shortLabel}`.toLowerCase().includes(normalizedQuery)
+          : true,
+      ),
+    [normalizedQuery],
+  );
+
+  const hasResults = filteredTools.length > 0 || filteredCategories.length > 0;
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        contentInsetAdjustmentBehavior="automatic"
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.content}>
+          <BrandLockup />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <View style={styles.hero}>
+            <AppText variant="title">Every useful digital tool, in one place.</AppText>
+            <AppText color={colors.inkMuted}>
+              Prepare documents, images, media, text, and files without changing apps.
+            </AppText>
+          </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+          <SearchField onChangeText={setQuery} value={query} />
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+          {!hasResults && (
+            <View style={styles.emptyState}>
+              <AppText variant="bodyMedium">No matching tools</AppText>
+              <AppText color={colors.inkMuted} variant="caption">
+                Try a format such as PDF, image, or text.
+              </AppText>
+            </View>
+          )}
+
+          {filteredTools.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeading}>
+                <AppText variant="heading">Workspaces</AppText>
+                <AppText color={colors.inkMuted} variant="caption">
+                  {filteredTools.length} {filteredTools.length === 1 ? 'workspace' : 'workspaces'}
+                </AppText>
+              </View>
+              <View style={styles.toolList}>
+                {filteredTools.map((tool) => (
+                  <ToolCard key={tool.slug} tool={tool} />
+                ))}
+              </View>
+            </View>
+          )}
+
+          {filteredCategories.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeading}>
+                <AppText variant="heading">Catalog</AppText>
+                <AppText color={colors.inkMuted} variant="caption">
+                  91 tools across 10 categories
+                </AppText>
+              </View>
+              <View style={styles.categoryGrid}>
+                {filteredCategories.map((category) => (
+                  <CategoryCard category={category} key={category.id} />
+                ))}
+              </View>
+            </View>
+          )}
+
+          <AppText color={colors.inkSubtle} style={styles.footer} variant="caption">
+            More workspaces will be added as they become available.
+          </AppText>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
   safeArea: {
+    backgroundColor: colors.canvas,
     flex: 1,
-    paddingHorizontal: Spacing.four,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  content: {
+    alignSelf: 'center',
+    gap: spacing.xxxl,
+    maxWidth: layout.maxWidth,
+    paddingBottom: spacing.section,
+    paddingHorizontal: layout.screenPadding,
+    paddingTop: spacing.lg,
+    width: '100%',
+  },
+  hero: {
+    gap: spacing.md,
+    maxWidth: 620,
+  },
+  section: {
+    gap: spacing.lg,
+  },
+  sectionHeading: {
+    alignItems: 'baseline',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    justifyContent: 'space-between',
+  },
+  toolList: {
+    gap: spacing.md,
+  },
+  categoryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+  },
+  emptyState: {
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    gap: spacing.xs,
+    paddingVertical: spacing.xxxl,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  footer: {
+    maxWidth: 560,
+    paddingBottom: spacing.lg,
   },
 });

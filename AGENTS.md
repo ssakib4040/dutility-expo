@@ -1,41 +1,79 @@
-This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+# Dutility mobile
 
-## Expo has changed — do not trust your training data
+This repository contains the Expo/React Native app for Dutility, a catalog of everyday PDF, image, video, audio, document, text, file, archive, URL/QR, and AI utilities.
 
-Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
+The web product in `../dutility-frontend` is the product reference. Its catalog currently contains 91 tools in 10 categories. Only PDF to Word and PDF to Image have published workspace pages, and those pages do not yet call a conversion backend.
 
-1. Read the major version of the `expo` package in `package.json`.
-2. Fetch the matching versioned docs: `https://docs.expo.dev/versions/v<major>.0.0/`
-3. For anything else, fetch https://docs.expo.dev/llms.txt — an index of all Expo docs with corrections to common LLM misconceptions. Follow its links to the specific page you need; never answer from memory.
+## Product boundaries
 
-## Commands
+- Do not invent API endpoints, authentication behavior, billing rules, credit values, or file-retention promises.
+- Conversion, Clerk authentication, payments, and job history remain unimplemented until their contracts are defined.
+- A published workspace means that a route and interface exist; it does not imply that server-side conversion exists.
+- Keep copy factual and concise. Never claim that a file is processed locally, private, deleted, or secure unless the implementation proves it.
 
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
+## Expo documentation
+
+Expo changes every SDK release. Before editing Expo, EAS, Expo Router, or React Native APIs:
+
+1. Read the major version of `expo` in `package.json`.
+2. Use the matching docs at `https://docs.expo.dev/versions/v<major>.0.0/`.
+3. Read `https://docs.expo.dev/llms.txt` and follow the relevant linked page.
+
+Use `npx expo install <package>` for dependencies so Expo selects SDK-compatible versions. Do not add `ios/` or `android/` directories; this project uses Continuous Native Generation through `app.json` and config plugins.
+
+## Project structure
+
+- `src/app/`: routes and route layouts only.
+- `src/components/`: reusable presentational components.
+- `src/data/`: typed product catalog data.
+- `src/theme/`: design tokens and typography.
+- `src/config/`: public runtime configuration. Never put secrets in `EXPO_PUBLIC_*` variables.
+- `assets/`: app icons, splash assets, and static media.
+
+Use the `@/` alias for imports from `src/`. Keep business and integration logic out of route components as those concerns are added.
+
+## Navigation
+
+- Use Expo Router for all navigation.
+- Use `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
+- Tool details use `/tool/[slug]`. Slugs come from `src/data/catalog.ts`.
+- Prefer one navigator until the product genuinely needs tabs. Do not add placeholder tabs for future features.
+
+## Design system
+
+Dutility is light-first and uses IBM Plex Sans.
+
+- Canvas: `#F7F7F9`
+- Surface: `#FFFFFF`
+- Ink: `#23232D`
+- Muted ink: `#656574`
+- Primary indigo: `#6366F1`
+- Soft indigo: `#ECECFF`
+
+Use tokens from `src/theme/tokens.ts`; do not scatter new brand colors or spacing constants through screens. Favor compact, legible utility interfaces over decorative cards. Preserve safe-area insets, 44-point minimum touch targets, visible pressed states, screen-reader labels, dynamic text wrapping, and reduced-motion preferences.
+
+Use React Native primitives in shared files. Platform-specific DOM or CSS belongs only in `.web.tsx` files.
+
+## Adding a tool
+
+1. Add the tool to `src/data/catalog.ts` with an existing category ID and unique slug.
+2. Keep the catalog description aligned with the web frontend.
+3. Reuse `/tool/[slug]` unless the tool truly needs a specialized route.
+4. Put tool-specific workflows under a future `src/features/<tool-slug>/` directory rather than expanding the route file.
+5. Add validation, progress, cancellation, success, failure, and result-sharing states when processing is implemented.
+
+## Commands and quality gates
 
 ```bash
-npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
-npx expo start              # start the dev server
-npx expo lint               # lint
-npx tsc --noEmit            # typecheck
-npx expo-doctor             # diagnose dependency and config issues
-npx expo install --fix      # fix incompatible package versions
+npm run start
+npm run android
+npm run ios
+npm run web
+npm run lint
+npm run typecheck
+npm run doctor
 ```
 
-Run lint and typecheck before declaring any task done.
+Before declaring work complete, run lint and typecheck. Run Expo Doctor after dependency or app-config changes. For routing, asset, or bundling changes, also export the affected platform.
 
-## Navigation & Routing
-
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
-
-## Building with EAS
-
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
-Docs: https://docs.expo.dev/eas/index.md
-
-## Rules
-
-- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
-- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
-- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+Do not run `npm audit fix --force`; it may replace Expo packages with SDK-incompatible versions.
