@@ -3,7 +3,7 @@
     "name": "Dutility",
     "slug": "dutility",
     "description": "Everyday tools for documents, images, media, text, and files.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/dutility-app-icon-clean.png",
     "scheme": "dutility",
