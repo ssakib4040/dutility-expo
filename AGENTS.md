@@ -8,6 +8,10 @@ The web product in `../dutility-frontend` is the product reference. Its catalog 
 
 - Do not invent API endpoints, authentication behavior, billing rules, credit values, or file-retention promises.
 - Conversion, Clerk authentication, payments, and job history remain unimplemented until their contracts are defined.
+- Keep API surfaces separate: web health checks use `GET /status`; the Expo app uses `GET /mobile/status` on the deployed backend.
+- Do not point mobile code at the web status route or add `/api` to these paths; Azure Functions' default `/api` prefix is disabled.
+- The first two functional modules are `pdf-to-word` and `pdf-to-image`; mobile conversion requests must use the backend's `/mobile/` API surface.
+- Keep `.env.example` and the local `.env` present for Expo. `EXPO_PUBLIC_API_BASE_URL` must point to the deployed mobile API base URL; never commit secrets in either file.
 - A published workspace means that a route and interface exist; it does not imply that server-side conversion exists.
 - Keep copy factual and concise. Never claim that a file is processed locally, private, deleted, or secure unless the implementation proves it.
 
